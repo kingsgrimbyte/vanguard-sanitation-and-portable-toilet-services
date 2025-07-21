@@ -1,20 +1,23 @@
 import Banner from "@/app/components/Home/Banner";
 import React from "react";
-import data from "@/components/Content/servicePage.json";
 import Image from "next/image";
 import Service from "@/app/components/Home/Service";
 import { headers } from "next/headers";
-import content from "@/components/Content/subDomainUrlContent.json";
-import ContactInfo from "@/components/Content/ContactInfo.json";
 import CtaSimple from "@/app/components/CtaSimple";
-import NavbarState from "@/app/components/State/NavbarState";
 import Navbar from "@/app/components/Navbar";
+
+import contactContent from "@/app/Data/content";
+import subdomainContent from "@/app/Data/FinalContent";
+
+const ContactInfo: any = contactContent.contactContent;
+const data: any = contactContent.servicePageContent;
+const content: any = subdomainContent.subdomainData;
 
 const Servicedata = data?.serviceData;
 
 export function generateMetadata({ params }: { params: { services: string } }) {
   const serviceData: any = Servicedata.lists.find(
-    (service) => service.slug === params.services,
+    (service:any) => service.slug === params.services,
   );
 
   return {
@@ -31,7 +34,7 @@ export function generateMetadata({ params }: { params: { services: string } }) {
 
 const page = ({ params }: { params: { services: string } }) => {
   const serviceData: any = Servicedata.lists.find(
-    (service) => service.slug === params.services,
+    (service:any) => service.slug === params.services,
   );
   const headersList = headers();
   const subdomain = headersList.get("x-subdomain");
@@ -80,9 +83,6 @@ const page = ({ params }: { params: { services: string } }) => {
           </div>
           {/* who */}
         </div>
-        {/* <div className="mx-auto my-4 w-80 border p-4">
-          <div dangerouslySetInnerHTML={{ __html: serviceData.description }} />
-        </div> */}
         <div className="my-20 bg-main text-white">
           <div className="text- mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
             <h2 className=" text-center text-3xl font-bold">

@@ -1,9 +1,7 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import content from "@/components/Content/subDomainUrlContent.json";
 import Banner from "@/app/components/Home/Banner";
 import Service from "@/app/components/Home/Service";
-import ContactInfo from "@/components/Content/ContactInfo.json";
 import Faq from "@/app/components/Home/Faq";
 import HourCta from "@/app/components/Home/HourCta";
 import ReviewWidget from "@/app/components/Widgets/ReviewWidget";
@@ -11,11 +9,15 @@ import AreaWeServe from "@/app/components/Widgets/AreaWeServe";
 import Affordable from "@/app/components/Home/Affordable";
 import ProcessWidget from "@/app/components/Widgets/ProcessWidget";
 import NavbarState from "@/app/components/State/NavbarState";
-import { headers } from "next/headers";
-import PortaPottyCalculator from "@/app/components/Widgets/Calculator";
 import Link from "next/link";
 import ZipAndNeighAccordian from "@/app/components/Home/ZipAndNeighAccordian";
-// import Service from "@/app/Components/Service";
+
+import contactContent from "@/app/Data/content";
+import subdomainContent from "@/app/Data/FinalContent";
+import PortaPottyCalculator from "@/app/components/Widgets/Calculator";
+
+const ContactInfo: any = contactContent.contactContent;
+const content: any = subdomainContent.subdomainData;
 
 interface SubdomainPageProps {
   params: { State: string };
@@ -86,20 +88,6 @@ export function generateMetadata({ params }: SubdomainPageProps) {
       canonical: `https://${State}.${ContactInfo.host}`,
     },
   };
-}
-interface CityData {
-  slug: string;
-  bannerText: string;
-  hone: string;
-  pone: string;
-  htwo: string;
-  ptwo: string;
-  hthree: string;
-  pthree: string;
-  hfour: string;
-  pfour: string;
-  history: string[];
-  topSight: { name: string; image: string; description: string }[];
 }
 export default function SubdomainPage({ params }: SubdomainPageProps) {
   // console.log(params)
@@ -197,9 +185,6 @@ export default function SubdomainPage({ params }: SubdomainPageProps) {
             ?.split("[phone]").join(ContactInfo.No)}.`}
         />
         {/* Section 1 */}
-        {/* <p>{subDomain.map((item:any)=>(
-        <p>{item}</p>
-      ))}</p> */}
         <div className="mt-14 grid w-full grid-cols-1 items-center  gap-6 px-6 md:mt-28 md:grid-cols-2 md:px-24">
           <div className=" h-full">
             <Image

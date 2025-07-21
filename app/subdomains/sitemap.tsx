@@ -1,5 +1,4 @@
 import { MetadataRoute } from 'next'
-//  import CityData1 from "@/public/City.json";
  import contentData from "@/components/Content/ContactInfo.json"
 import data from "@/components/Content/subDomainUrlContent.json";
 

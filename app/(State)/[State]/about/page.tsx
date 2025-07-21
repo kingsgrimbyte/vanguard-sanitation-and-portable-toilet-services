@@ -2,17 +2,15 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { headers } from "next/headers";
-import { BiMailSend, BiSolidPhone, BiSolidTime } from "react-icons/bi";
-import { BsBookmarkStarFill, BsFillPatchCheckFill } from "react-icons/bs";
 import { FaCrown } from "react-icons/fa6";
 import Banner from "@/app/components/Home/Banner";
-import contentData from "@/components/Content/about.json";
-import ContactInfo from "@/components/Content/ContactInfo.json";
-import content from "@/components/Content/subDomainUrlContent.json";
 import NavbarState from "@/app/components/State/NavbarState";
-interface AboutProps {
-  subdomain: string;
-}
+import contactContent from "@/app/Data/content";
+import subdomainContent from "@/app/Data/FinalContent";
+
+const content: any = subdomainContent.subdomainData;
+const ContactInfo: any = contactContent.contactContent;
+const contentData: any = contactContent.aboutContent;
 
 export function generateMetadata({ params }: { params: { services: string } }) {
   const headersList = headers();
@@ -24,12 +22,8 @@ export function generateMetadata({ params }: { params: { services: string } }) {
     subdomainKey = subdomainKey.split("-").pop();
   }
 
-  // const serviceData: any = NewContent.find(
-  //   (content) => content.StateID === subdomainKey?.toUpperCase(),
-  // );
 
   if (!subdomain || !(subdomain in content)) {
-    // Handle the case where subdomain is null or not in content
     return <div>Error: Invalid subdomain</div>;
   }
   const Data: any = content[subdomain];
