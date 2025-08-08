@@ -113,46 +113,23 @@ const page = ({ params }: { params: { services: string } }) => {
         <div className="my-20">
           <CtaSimple />
         </div>
-        {serviceData.seoContent && (
-          <div className="mx-auto max-w-7xl px-6 py-12">
-            <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-2">
-              {/* LEFT: Image */}
-              <div className="w-full">
-                <Image
-                  width={1000}
-                  height={1000}
-                  src="https://ik.imagekit.io/h7rza8886p/during-construction-of-a-house-portable-plastic-b-2025-03-27-03-45-26-utc.jpg?updatedAt=1748415477782" // replace with your actual image path
-                  alt="Construction Portable Toilet"
-                  className="h-auto w-full rounded-xl object-cover shadow-md"
-                />
-              </div>
-              {/* RIGHT: Text Content */}
-              <div>
-                <div
-                  className="mt-4 text-lg"
-                  dangerouslySetInnerHTML={{
-                    __html: serviceData.seoContent
-                      ?.split("[location]")
-                      .join(ContactInfo.location)
-                      ?.split("[phone]")
-                      .join(ContactInfo.No),
-                  }}
-                ></div>
-              </div>
+          {serviceData.seoContent && (
+          <div className="bg-gray-100 text-black ">
+            <div className="mx-auto max-w-4xl px-4 py-12 text-center sm:px-6 lg:px-8">
+              <div
+                className="mt-4 "
+                dangerouslySetInnerHTML={{
+                  __html: serviceData.seoContent
+                    ?.split("[location]").join(ContactInfo.location)
+            ?.split("[phone]").join(ContactInfo.No),
+                }}
+              ></div>
             </div>
           </div>
         )}
-        {/* <TypeOfDumpster /> */}
       </div>
     </div>
   );
 };
 
 export default page;
-
-// export function generateStaticParams() {
-//   const cityData: any = Servicedata.lists;
-//   return cityData.map((locations: any) => ({
-//     services: locations.slug.toString(),
-//   }));
-// }
