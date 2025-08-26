@@ -18,7 +18,7 @@ import PortaPottyCalculator from "@/app/components/Widgets/Calculator";
 
 const ContactInfo: any = contactContent.contactContent;
 const content: any = subdomainContent.subdomainData;
-
+const home: any = contactContent.homePageContent;
 interface SubdomainPageProps {
   params: { State: string };
 }
@@ -78,12 +78,18 @@ export function generateMetadata({ params }: SubdomainPageProps) {
   const { State } = params;
   const cityData: any = content;
   const ContentData = cityData[State];
-  
+
   return {
-    title: ContentData?.metaTitle?.split("[location]").join(ContentData?.name || ContactInfo.location)
-    ?.split("[phone]").join(ContactInfo.No),
-    description: ContentData?.metaDescription?.split("[location]").join(ContentData?.name || ContactInfo.location)
-    ?.split("[phone]").join(ContactInfo.No),
+    title: ContentData?.metaTitle
+      ?.split("[location]")
+      .join(ContentData?.name || ContactInfo.location)
+      ?.split("[phone]")
+      .join(ContactInfo.No),
+    description: ContentData?.metaDescription
+      ?.split("[location]")
+      .join(ContentData?.name || ContactInfo.location)
+      ?.split("[phone]")
+      .join(ContactInfo.No),
     alternates: {
       canonical: `https://${State}.${ContactInfo.host}`,
     },
@@ -104,66 +110,86 @@ export default function SubdomainPage({ params }: SubdomainPageProps) {
   }
   // nity or db query us particular subdomain read data from database .... neeche theme nu pass hoyega and page render hojaega
   // Render subdomain-specific content
-  const ContentData = cityData[State];
+  const ContentData = JSON.parse(
+    JSON.stringify(cityData[State])
+      .split("[location]")
+      .join(ContactInfo.location)
+      .split("[phone]")
+      .join(ContactInfo.No),
+  );
   const slugs: any = Object.keys(cityData)
     .filter((key) => key !== State)
     .map((key) => cityData[key]);
-    const jsonLd = {
-      "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@context": "https://schema.org",
-          "@type": "LocalBusiness",
-          name: `${ContactInfo.name}`,
-          image: `${ContactInfo.logoImage}`,
-          address: {
-            "@type": "PostalAddress",
-            streetAddress: `${stateName[abbrevations.toUpperCase()]} ${ContactInfo.service}`,
-            addressLocality: `${ContentData?.name}, ${abbrevations.toUpperCase()}`,
-            addressRegion: stateName[abbrevations.toUpperCase()],
-            postalCode: ContentData?.zipCodes.split("|")[0] || "",
-            addressCountry: "US",
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        name: `${ContactInfo.name}`,
+        image: `${ContactInfo.logoImage}`,
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: `${stateName[abbrevations.toUpperCase()]} ${ContactInfo.service}`,
+          addressLocality: `${ContentData?.name}, ${abbrevations.toUpperCase()}`,
+          addressRegion: stateName[abbrevations.toUpperCase()],
+          postalCode: ContentData?.zipCodes.split("|")[0] || "",
+          addressCountry: "US",
+        },
+        review: {
+          "@type": "Review",
+          reviewRating: {
+            "@type": "Rating",
+            ratingValue: "4.9",
+            bestRating: "5",
           },
-          review: {
-            "@type": "Review",
-            reviewRating: {
-              "@type": "Rating",
-              ratingValue: "4.9",
-              bestRating: "5",
-            },
-            author: {
-              "@type": "Person",
-              name: `${stateName[abbrevations.toUpperCase()]} ${ContactInfo.service}`,
-            },
-          },
-          telephone: ContactInfo.No,
-          openingHoursSpecification: {
-            "@type": "OpeningHoursSpecification",
-            dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-            opens: "09:00",
-            closes: "20:00",
+          author: {
+            "@type": "Person",
+            name: `${stateName[abbrevations.toUpperCase()]} ${ContactInfo.service}`,
           },
         },
-        {
-          "@context": "https://schema.org",
-          "@type": "Product",
-          name: `${ContactInfo.service} in ${ContentData?.name}, ${abbrevations.toUpperCase()}`,
-          brand: {
-            "@type": "Brand",
-            name: `${ContactInfo.service} ${ContentData?.name}, ${abbrevations.toUpperCase()} Pros`,
-          },
-          description: `${ContentData?.metaDescription?.split("[location]").join(ContentData?.name || ContactInfo.location)
-            ?.split("[phone]").join(ContactInfo.No)}`,
-          url: `https://${State}.${ContactInfo.host}`,
-          aggregateRating: {
-            "@type": "AggregateRating",
-            reviewCount: 7,
-            ratingValue: 4.802,
-          },
+        telephone: ContactInfo.No,
+        openingHoursSpecification: {
+          "@type": "OpeningHoursSpecification",
+          dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+          opens: "09:00",
+          closes: "20:00",
         },
-      ],
-    };
-  
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        name: `${ContactInfo.service} in ${ContentData?.name}, ${abbrevations.toUpperCase()}`,
+        brand: {
+          "@type": "Brand",
+          name: `${ContactInfo.service} ${ContentData?.name}, ${abbrevations.toUpperCase()} Pros`,
+        },
+        description: `${ContentData?.metaDescription
+          ?.split("[location]")
+          .join(ContentData?.name || ContactInfo.location)
+          ?.split("[phone]")
+          .join(ContactInfo.No)}`,
+        url: `https://${State}.${ContactInfo.host}`,
+        aggregateRating: {
+          "@type": "AggregateRating",
+          reviewCount: 7,
+          ratingValue: 4.802,
+        },
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: ContentData.faq.map((faq: any) => ({
+          "@type": "Question",
+          name: faq?.ques?.split("[location]").join(State),
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: faq?.ans?.split("[location]").join(State),
+          },
+        })),
+      },
+    ],
+  };
+
   return (
     <div className="">
       <NavbarState />
@@ -177,12 +203,20 @@ export default function SubdomainPage({ params }: SubdomainPageProps) {
       </section>
       <div className="mx-auto max-w-[2100px] overflow-hidden">
         <Banner
-          h1={`${ContentData.h1Banner?.split("[location]").join( ContentData?.name || ContactInfo.location)
-            ?.split("[phone]").join(ContactInfo.No)} ${ContentData.zipCodes && ContentData.zipCodes.split("|")[0]}`}
+          h1={`${ContentData.h1Banner
+            ?.split("[location]")
+            .join(ContentData?.name || ContactInfo.location)
+            ?.split("[phone]")
+            .join(
+              ContactInfo.No,
+            )} ${ContentData.zipCodes && ContentData.zipCodes.split("|")[0]}`}
           image={ContentData.bannerImage}
           header={ContentData.bannerQuote}
-          p1={`${ContentData?.metaDescription?.split("[location]").join( ContentData?.name || ContactInfo.location)
-            ?.split("[phone]").join(ContactInfo.No)}.`}
+          p1={`${ContentData?.metaDescription
+            ?.split("[location]")
+            .join(ContentData?.name || ContactInfo.location)
+            ?.split("[phone]")
+            .join(ContactInfo.No)}.`}
         />
         {/* Section 1 */}
         <div className="mt-14 grid w-full grid-cols-1 items-center  gap-6 px-6 md:mt-28 md:grid-cols-2 md:px-24">
@@ -192,7 +226,9 @@ export default function SubdomainPage({ params }: SubdomainPageProps) {
               width={1000}
               src={`${ContentData?.h2Image}`}
               className="h-full w-full  rounded-lg object-cover shadow-lg"
-              alt={ContentData?.h2Image.split("/").pop()?.split(".")[0] || "image"}
+              alt={
+                ContentData?.h2Image.split("/").pop()?.split(".")[0] || "image"
+              }
             />
           </div>
           <div className=" flex w-full flex-col gap-3 ">
@@ -297,8 +333,12 @@ export default function SubdomainPage({ params }: SubdomainPageProps) {
                 width={10000}
                 src={`${ContentData.h5Image}`}
                 className=" h-[16rem] w-full rounded-lg object-cover shadow-lg"
-                alt={ContentData.h5Image.split("/").pop()?.split(".")[0] || "image"}
-                title={ContentData.h5Image.split("/").pop()?.split(".")[0] || "image"}
+                alt={
+                  ContentData.h5Image.split("/").pop()?.split(".")[0] || "image"
+                }
+                title={
+                  ContentData.h5Image.split("/").pop()?.split(".")[0] || "image"
+                }
               />
             </div>
           </div>
@@ -313,7 +353,10 @@ export default function SubdomainPage({ params }: SubdomainPageProps) {
                 width={10000}
                 src={`${ContentData?.h6Image}`}
                 className=" h-[17rem] w-full rounded-lg object-cover  shadow-lg"
-                alt={ContentData?.h6Image.split("/").pop()?.split(".")[0] || "image"}
+                alt={
+                  ContentData?.h6Image.split("/").pop()?.split(".")[0] ||
+                  "image"
+                }
                 title={`${ContentData.h6Image.split("/").pop()?.split(".")[0] || "image"} ,${ContentData.name}`}
               />
             </div>
@@ -399,7 +442,7 @@ export default function SubdomainPage({ params }: SubdomainPageProps) {
         ) : null}
         {/* Season Section */}
         <ProcessWidget />
-        <PortaPottyCalculator/>
+        <PortaPottyCalculator />
         {/* Cta */}
         <div className="mt-14 md:mt-28">
           <HourCta />
@@ -421,7 +464,10 @@ export default function SubdomainPage({ params }: SubdomainPageProps) {
               <Image
                 src={`${ContentData?.h7Image}`}
                 className="h-[100%] w-full rounded-lg border object-cover shadow-lg "
-                alt={ContentData?.h7Image.split("/").pop()?.split(".")[0] || "image"}
+                alt={
+                  ContentData?.h7Image.split("/").pop()?.split(".")[0] ||
+                  "image"
+                }
                 width={1000}
                 height={500}
               />
@@ -468,75 +514,80 @@ export default function SubdomainPage({ params }: SubdomainPageProps) {
           </div>
         )}
         {/* Neighborhood */}
-      {ContentData?.neighbourhoods ? (
-        <div className="">
-          <div className="block border px-4 md:hidden">
-            <ZipAndNeighAccordian
-              ques={`Neighborhoods we serve in  ${ContentData?.name}`}
-              ans={ContentData?.neighbourhoods?.split("|")}
-              slug={ContentData?.slug}
-            />
-          </div>
-          <div className="mt-28 hidden items-center justify-start md:mx-40 md:block ">
-            <div className="text-center text-3xl font-bold">
-              <p className="text-main">
-                Neighborhoods we serve in {ContentData?.name}
-              </p>
+        {ContentData?.neighbourhoods ? (
+          <div className="">
+            <div className="block border px-4 md:hidden">
+              <ZipAndNeighAccordian
+                ques={`Neighborhoods we serve in  ${ContentData?.name}`}
+                ans={ContentData?.neighbourhoods?.split("|")}
+                slug={ContentData?.slug}
+              />
             </div>
-            <div className="mx-10 mt-4 flex h-fit w-auto flex-wrap justify-center gap-4">
-              {ContentData?.neighbourhoods?.split("|").map((item: any) => (
-                <div className="" key={item}>
-                  <a
-                    target="_blank"
-                    href={`https://www.google.com/maps/search/?api=1&query=${item}, ${ContentData?.slug},`}
-                  >
-                    <p className="border bg-minor px-2 py-1 text-white duration-100 ease-in-out hover:text-main">
-                      {item}
-                    </p>
-                  </a>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      ) : null}
-      {/* Neighborhood */}
-      {/* Zip */}
-      {ContentData?.zipCodes ? (
-        <div className="">
-          <div className="block border px-4 md:hidden">
-            <ZipAndNeighAccordian
-              ques={` Zip Codes we serve in ${ContentData?.name}`}
-              ans={ContentData?.zipCodes?.split("|")}
-              slug={ContentData?.slug}
-            />
-          </div>
-          <div className="mt-28 hidden items-center justify-start md:mx-40 md:block  ">
-            <div className="text-center text-3xl font-bold">
-              <p className="text-main">
-                Zip&nbsp;Codes we serve in {ContentData?.name}
-              </p>
-            </div>
-            <div className="mx-10 mt-4 flex h-fit w-auto flex-wrap justify-center gap-4">
-              {ContentData?.zipCodes?.split("|").map((item: any) => (
-                <div className="" key={item}>
-                  <Link
-                    target="_blank"
-                    href={`https://www.google.com/maps/search/?api=1&query=${item}, ${ContentData?.slug},`}
-                  >
-                    <p className="border bg-minor px-2 py-1 text-white duration-100 ease-in-out hover:text-main">
-                      {item}
-                    </p>
-                  </Link>
-                </div>
-              ))}
+            <div className="mt-28 hidden items-center justify-start md:mx-40 md:block ">
+              <div className="text-center text-3xl font-bold">
+                <p className="text-main">
+                  Neighborhoods we serve in {ContentData?.name}
+                </p>
+              </div>
+              <div className="mx-10 mt-4 flex h-fit w-auto flex-wrap justify-center gap-4">
+                {ContentData?.neighbourhoods?.split("|").map((item: any) => (
+                  <div className="" key={item}>
+                    <a
+                      target="_blank"
+                      href={`https://www.google.com/maps/search/?api=1&query=${item}, ${ContentData?.slug},`}
+                    >
+                      <p className="border bg-minor px-2 py-1 text-white duration-100 ease-in-out hover:text-main">
+                        {item}
+                      </p>
+                    </a>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      ) : null}
-      {/* Zip */}
+        ) : null}
+        {/* Neighborhood */}
+        {/* Zip */}
+        {ContentData?.zipCodes ? (
+          <div className="">
+            <div className="block border px-4 md:hidden">
+              <ZipAndNeighAccordian
+                ques={` Zip Codes we serve in ${ContentData?.name}`}
+                ans={ContentData?.zipCodes?.split("|")}
+                slug={ContentData?.slug}
+              />
+            </div>
+            <div className="mt-28 hidden items-center justify-start md:mx-40 md:block  ">
+              <div className="text-center text-3xl font-bold">
+                <p className="text-main">
+                  Zip&nbsp;Codes we serve in {ContentData?.name}
+                </p>
+              </div>
+              <div className="mx-10 mt-4 flex h-fit w-auto flex-wrap justify-center gap-4">
+                {ContentData?.zipCodes?.split("|").map((item: any) => (
+                  <div className="" key={item}>
+                    <Link
+                      target="_blank"
+                      href={`https://www.google.com/maps/search/?api=1&query=${item}, ${ContentData?.slug},`}
+                    >
+                      <p className="border bg-minor px-2 py-1 text-white duration-100 ease-in-out hover:text-main">
+                        {item}
+                      </p>
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : null}
+        {/* Zip */}
         {/* FAQ */}
-        {ContentData?.faq ? <Faq value={State} /> : null}
+        {ContentData?.faq ? (
+          <Faq
+            data={ContentData?.faq}
+            value={`${ContentData.name}, ${abbrevations.toUpperCase()}`}
+          />
+        ) : null}
         {/* FAQ */}
         {/* CounterCta */}
         {/* CounterCta */}
