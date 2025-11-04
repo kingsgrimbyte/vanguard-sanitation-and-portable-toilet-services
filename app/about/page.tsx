@@ -11,13 +11,13 @@ const ContactInfo: any = contactContent.contactContent;
 const aboutContent: any = contactContent.aboutContent;
 export const metadata: Metadata = {
   title: {
-    absolute: aboutContent.metaTitle?.split("[location]")
+    absolute: aboutContent.metaTitle?.split(ContactInfo.location)
     .join(ContactInfo.location)
     ?.split("[phone]")
     .join(ContactInfo.No),
   },
   description: aboutContent.metaDescription
-    ?.split("[location]")
+    ?.split(ContactInfo.location)
     .join(ContactInfo.location)
     ?.split("[phone]")
     .join(ContactInfo.No),
@@ -35,14 +35,14 @@ const page = () => {
             {/* poster */}
             <Banner
               h1={aboutContent.h1Banner
-                ?.split("[location]")
+                ?.split(ContactInfo.location)
                 .join(ContactInfo.location)
                 ?.split("[phone]")
                 .join(ContactInfo.No)}
               image={aboutContent.bannerImage}
               header={aboutContent.bannerQuote}
               p1={aboutContent.metaDescription
-                ?.split("[location]")
+                ?.split(ContactInfo.location)
                 .join(ContactInfo.location)
                 ?.split("[phone]")
                 .join(ContactInfo.No)}
@@ -63,7 +63,7 @@ const page = () => {
                     className="  text-justify"
                     dangerouslySetInnerHTML={{
                       __html: aboutContent.p2
-                        ?.split("[location]")
+                        ?.split(ContactInfo.location)
                         .join(ContactInfo.location)
                         ?.split("[phone]")
                         .join(ContactInfo.No),
@@ -97,7 +97,7 @@ const page = () => {
                     className=" p-4 text-center"
                     dangerouslySetInnerHTML={{
                       __html: aboutContent.missionSection[0].description
-                        ?.split("[location]")
+                        ?.split(ContactInfo.location)
                         .join(ContactInfo.location)
                         ?.split("[phone]")
                         .join(ContactInfo.No),
@@ -113,7 +113,7 @@ const page = () => {
                     className=" p-4 text-center"
                     dangerouslySetInnerHTML={{
                       __html: aboutContent.missionSection[1].description
-                        ?.split("[location]")
+                        ?.split(ContactInfo.location)
                         .join(ContactInfo.location)
                         ?.split("[phone]")
                         .join(ContactInfo.No),
@@ -129,7 +129,7 @@ const page = () => {
                     className=" p-4 text-center"
                     dangerouslySetInnerHTML={{
                       __html: aboutContent.missionSection[2].description
-                        ?.split("[location]")
+                        ?.split(ContactInfo.location)
                         .join(ContactInfo.location)
                         ?.split("[phone]")
                         .join(ContactInfo.No),
@@ -169,7 +169,7 @@ const page = () => {
                 className=" mt-2 text-center text-xl"
                 dangerouslySetInnerHTML={{
                   __html: aboutContent.areaweserveSection.description
-                    ?.split("[location]")
+                    ?.split(ContactInfo.location)
                     .join(ContactInfo.location)
                     ?.split("[phone]")
                     .join(ContactInfo.No),

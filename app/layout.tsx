@@ -31,7 +31,7 @@ export default function RootLayout({
       </head>
       <GoogleAnalytics gaId={ContactInfo.googleAnalytics} />
       {/* <GoogleTagManager gtmId="" /> */}
-      <body className={`mx-auto w-full max-w-screen-2xl overflow-x-hidden ${inter.className}`}>
+      <body className={`mx-auto w-full max-w-[1910px] overflow-x-hidden ${inter.className}`}>
         <div className="bg-white">{children}</div>
         <CallMobileButton />
         <Footer />
